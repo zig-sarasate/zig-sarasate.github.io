@@ -1,0 +1,214 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zig Sarasate · Violinist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cormorant+SC:wght@500&family=Jost:wght@300;400&display=swap">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/brands.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/solid.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/fontawesome.min.js"></script>
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+  --paper: #f7f2e8;
+  --card: #fffdf8;
+  --ink: #1f1a17;
+  --soft: #6e645b;
+  --rule: #d9cbb0;
+  --gold: #a8843f;
+  --gold-hi: #c9a45c;
+  --serif: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+  --caps: "Cormorant SC", "Cormorant Garamond", Georgia, serif;
+  --sans: "Jost", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #0f0d0c; --card: #171412; --ink: #f1eadc; --soft: #a99e8e;
+    --rule: #3a3127; --gold: #c9a45c; --gold-hi: #e0c084;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0f0d0c; --card: #171412; --ink: #f1eadc; --soft: #a99e8e;
+  --rule: #3a3127; --gold: #c9a45c; --gold-hi: #e0c084;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+body {
+  margin: 0; min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px; line-height: 1.6;
+  padding: 0 18px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sheet {
+  max-width: 520px; margin: 32px auto 40px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: 56px clamp(22px, 7vw, 52px) 40px;
+  position: relative;
+  animation: fade .9s ease both;
+}
+/* inner double frame */
+.sheet::before {
+  content: ""; position: absolute; inset: 8px;
+  border: 1px solid color-mix(in oklab, var(--gold) 45%, transparent);
+  pointer-events: none;
+}
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } }
+
+header { text-align: center; }
+.crest {
+  width: 96px; height: 96px; margin: 0 auto 26px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  display: grid; place-items: center;
+  position: relative;
+  font-family: var(--serif); font-style: italic; font-size: 38px; font-weight: 400;
+  color: var(--gold); letter-spacing: .02em;
+}
+.crest::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; border: 1px solid color-mix(in oklab, var(--gold) 40%, transparent); }
+
+h1 {
+  margin: 0; font-weight: 500;
+  font-size: clamp(36px, 9vw, 48px); line-height: 1.05; letter-spacing: .01em;
+}
+.role {
+  margin: 12px 0 0;
+  font-family: var(--sans); font-weight: 400; font-size: 12px;
+  letter-spacing: .38em; text-transform: uppercase; color: var(--gold);
+  padding-left: .38em; /* balance tracking */
+}
+
+.ornament { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 28px auto; color: var(--gold); max-width: 280px; }
+.ornament::before, .ornament::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+.ornament::after { transform: scaleX(-1); }
+.ornament svg { flex: none; }
+
+.bio {
+  margin: 0 auto; max-width: 34ch; text-align: center;
+  font-style: italic; font-size: 20px; color: var(--soft); text-wrap: pretty;
+}
+.occasions {
+  margin: 22px auto 0; text-align: center; max-width: 36ch;
+  font-family: var(--caps); font-size: 16px; letter-spacing: .06em; color: var(--ink);
+}
+.occasions span + span::before { content: "·"; color: var(--gold); margin: 0 .55em; }
+
+.cta {
+  display: block; margin: 34px auto 0; max-width: 300px;
+  text-align: center; text-decoration: none;
+  font-family: var(--sans); font-size: 12.5px; font-weight: 400;
+  letter-spacing: .28em; text-transform: uppercase;
+  color: var(--card); background: var(--ink);
+  padding: 15px 20px 15px calc(20px + .28em);
+  border: 1px solid var(--ink);
+  transition: background .3s, color .3s, border-color .3s;
+}
+.cta:hover { background: var(--gold); border-color: var(--gold); color: #fff; }
+.cta:focus-visible, .row:focus-visible, .copy:focus-visible { outline: 1px solid var(--gold); outline-offset: 4px; }
+
+section { margin-top: 40px; }
+h2 {
+  margin: 0 0 6px; text-align: center;
+  font-family: var(--sans); font-weight: 400; font-size: 11px;
+  letter-spacing: .34em; text-transform: uppercase; color: var(--soft);
+  padding-left: .34em;
+}
+.list { list-style: none; margin: 0; padding: 0; }
+.row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 15px 4px;
+  border-bottom: 1px solid var(--rule);
+  color: inherit; text-decoration: none;
+  transition: padding .3s ease;
+}
+.list li:first-child .row { border-top: 1px solid var(--rule); }
+.row:hover { padding-left: 10px; }
+.row .ico { flex: none; width: 22px; text-align: center; color: var(--gold); font-size: 16px; }
+.row .name { flex: 1; font-size: 20px; font-weight: 500; }
+.row .handle { font-family: var(--sans); font-weight: 300; font-size: 13px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48%; }
+.row .chev { flex: none; color: var(--rule); transition: color .3s, transform .3s; }
+.row:hover .chev { color: var(--gold); transform: translateX(3px); }
+@media (max-width: 380px) { .row .handle { display: none; } }
+
+footer {
+  margin-top: 40px; text-align: center;
+  font-family: var(--sans); font-weight: 300; font-size: 12px; letter-spacing: .08em; color: var(--soft);
+}
+.copy {
+  margin-top: 14px;
+  font: inherit; letter-spacing: .18em; text-transform: uppercase; font-size: 11px;
+  color: var(--ink); background: transparent; cursor: pointer;
+  border: 0; border-bottom: 1px solid var(--gold); padding: 4px 2px;
+}
+#copyFallback { display: block; width: 100%; margin-top: 10px; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); padding: 6px 10px; }
+[hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
+</style>
+</head><body>
+
+<main class="sheet">
+  <header>
+    <div class="crest" aria-hidden="true">ZS</div>
+    <h1>Zig Sarasate</h1>
+    <p class="role">Violinist</p>
+
+    <div class="ornament" aria-hidden="true">
+      <svg width="34" height="12" viewBox="0 0 34 12" fill="none"><path d="M1 6c5 0 6-4 10-4s4 8 6 8 2-8 6-8 5 4 10 4" stroke="currentColor" stroke-width="1"/></svg>
+    </div>
+
+    <p class="bio">Live violin for weddings, celebrations, and distinguished occasions — performed with grace, tailored to your moment.</p>
+    <p class="occasions" aria-label="Occasions">
+      <span>Weddings</span><span>Debuts</span><span>Corporate Functions</span><span>Receptions</span><span>Private Dinners</span>
+    </p>
+  </header>
+
+  <section aria-labelledby="h-perf">
+    <h2 id="h-perf">Connect</h2>
+    <ul class="list" id="performances"></ul>
+  </section>
+
+  <footer>
+    <div>© <span id="yr"></span> Zig Sarasate</div>
+  </footer>
+</main>
+
+<script>
+/* ===== Edit details here ===== */
+const LINKS = [
+  { group: "performances", name: "Facebook",  icon: "fa-brands fa-facebook",          handle: "Personal profile",   url: "https://www.facebook.com/ziguenerweisen.samillano/" },
+  { group: "performances", name: "Facebook Page", icon: "fa-brands fa-facebook-f",    handle: "Zig Sarasate · Violinist", url: "https://www.facebook.com/people/Saxophone-Violin-Duo-SVD/61555980945013/" },
+  { group: "performances", name: "Instagram", icon: "fa-brands fa-instagram",         handle: "@yourhandle",        url: "https://www.instagram.com/cliff062023/" },
+  { group: "performances", name: "TikTok",    icon: "fa-brands fa-tiktok",            handle: "@yourhandle",        url: "https://www.tiktok.com/@zig.sarasate?is_from_webapp=1&sender_device=pc" },
+  { group: "performances", name: "YouTube",   icon: "fa-brands fa-youtube",           handle: "@yourchannel",       url: "https://www.youtube.com/@clifmaestro2313" },
+];
+/* ============================= */
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const chev = '<svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M5 2.5L9.5 7 5 11.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+
+for (const l of LINKS) {
+  const li = document.createElement("li");
+  const a = document.createElement("a");
+  a.className = "row";
+  a.href = l.url;
+  if (/^https?:/.test(l.url)) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+  a.setAttribute("aria-label", l.name);
+  a.innerHTML = `<span class="ico" aria-hidden="true"><i class="${esc(l.icon)}"></i></span>
+    <span class="name">${esc(l.name)}</span>${chev}`;
+  li.appendChild(a);
+  document.getElementById(l.group).appendChild(li);
+}
+
+document.getElementById("yr").textContent = new Date().getFullYear();
+</script>
+</body></html>
