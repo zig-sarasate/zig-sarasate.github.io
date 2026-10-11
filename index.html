@@ -22,6 +22,7 @@
   --serif: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
   --caps: "Cormorant SC", "Cormorant Garamond", Georgia, serif;
   --sans: "Jost", "Helvetica Neue", Arial, sans-serif;
+  --ease: cubic-bezier(.22, .61, .36, 1);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -47,72 +48,119 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ---------- Opening sequence ---------- */
+@keyframes sheetIn  { from { opacity: 0; transform: translateY(14px); } }
+@keyframes frameIn  { from { clip-path: inset(50% 50% 50% 50%); opacity: 0; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+@keyframes draw     { to { stroke-dashoffset: 0; } }
+@keyframes softIn   { from { opacity: 0; } }
+@keyframes riseIn   { from { opacity: 0; transform: translateY(10px); } }
+@keyframes nameIn   { from { opacity: 0; letter-spacing: .22em; filter: blur(6px); } }
+@keyframes lineOut  { from { transform: scaleX(0); } }
+@keyframes lineOutR { from { transform: scaleX(0); } to { transform: scaleX(-1); } }
+
 .sheet {
   max-width: 520px; margin: 32px auto 40px;
   background: var(--card);
   border: 1px solid var(--rule);
   padding: 56px clamp(22px, 7vw, 52px) 40px;
   position: relative;
-  animation: fade .9s ease both;
+  overflow: hidden; isolation: isolate;
+  animation: sheetIn 1s var(--ease) both;
 }
-/* inner double frame */
+/* inner double frame, drawn outward from the centre */
 .sheet::before {
   content: ""; position: absolute; inset: 8px;
   border: 1px solid color-mix(in oklab, var(--gold) 45%, transparent);
   pointer-events: none;
+  animation: frameIn 1.4s var(--ease) .35s both;
 }
-@keyframes fade { from { opacity: 0; transform: translateY(6px); } }
 
 header { text-align: center; }
 .crest {
   width: 96px; height: 96px; margin: 0 auto 26px;
-  border-radius: 50%;
-  border: 1px solid var(--gold);
-  display: grid; place-items: center;
-  position: relative;
+  position: relative; display: grid; place-items: center;
   font-family: var(--serif); font-style: italic; font-size: 38px; font-weight: 400;
   color: var(--gold); letter-spacing: .02em;
 }
-.crest::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; border: 1px solid color-mix(in oklab, var(--gold) 40%, transparent); }
+.crest svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.crest circle { fill: none; stroke: var(--gold); stroke-width: 1; }
+.crest .r1 { stroke-dasharray: 296; stroke-dashoffset: 296; animation: draw 1.6s var(--ease) .5s forwards; }
+.crest .r2 { stroke-dasharray: 265; stroke-dashoffset: -265; opacity: .45; animation: draw 1.6s var(--ease) .7s forwards; }
+.crest span { animation: softIn 1s ease 1.3s both; }
 
 h1 {
   margin: 0; font-weight: 500;
   font-size: clamp(36px, 9vw, 48px); line-height: 1.05; letter-spacing: .01em;
+  animation: nameIn 1.4s var(--ease) .9s both;
 }
 .role {
   margin: 12px 0 0;
   font-family: var(--sans); font-weight: 400; font-size: 12px;
   letter-spacing: .38em; text-transform: uppercase; color: var(--gold);
-  padding-left: .38em; /* balance tracking */
+  padding-left: .38em;
+  animation: softIn 1s ease 1.4s both;
 }
 
 .ornament { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 28px auto; color: var(--gold); max-width: 280px; }
 .ornament::before, .ornament::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
-.ornament::after { transform: scaleX(-1); }
-.ornament svg { flex: none; }
+.ornament::before { transform-origin: right; animation: lineOut 1.1s var(--ease) 1.5s both; }
+.ornament::after  { background: linear-gradient(270deg, transparent, var(--gold)); transform-origin: left; animation: lineOut 1.1s var(--ease) 1.5s both; }
+.ornament svg { flex: none; overflow: visible; }
+
+/* violin */
+.ornament { max-width: 360px; }
+.violin { width: 168px; height: auto; }
+.violin .body { fill: color-mix(in oklab, var(--gold) 12%, transparent); stroke: var(--gold); stroke-width: 1.1; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.8s var(--ease) 1.3s forwards, bodyFill 1s ease 2.4s both; }
+@keyframes bodyFill { from { fill: transparent; } }
+.violin .detail { animation: softIn 1s ease 2.2s both; }
+.violin .board { fill: var(--ink); opacity: .82; }
+.violin .scroll, .violin .fhole, .violin .tail, .violin .bridge { fill: none; stroke: var(--gold); stroke-width: 1; stroke-linecap: round; }
+.violin .tail { fill: var(--ink); stroke: none; opacity: .82; }
+.violin .peg { stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; opacity: .8; }
+.violin .s { stroke: var(--gold-hi); stroke-width: .45; transform-box: fill-box; transform-origin: center; }
+.violin .bowwrap { animation: softIn 1s ease 2.4s both; }
+.violin .bow { transform: translateX(0); }
+.violin .stick { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linecap: round; opacity: .85; }
+.violin .hair  { stroke: var(--gold-hi); stroke-width: .7; }
+.violin .frog  { fill: var(--ink); opacity: .85; }
+.violin .tip   { fill: var(--ink); opacity: .85; }
+.violin.playing .bow { animation: bowing 3.4s ease-in-out; }
+.violin.playing .s   { animation: vibrate .07s linear infinite; }
+.violin.playing .s:nth-of-type(2) { animation-duration: .08s; }
+.violin.playing .s:nth-of-type(3) { animation-duration: .09s; }
+.violin.playing .s:nth-of-type(4) { animation-duration: .1s; }
+@keyframes bowing {
+  0%   { transform: translateX(0); }
+  30%  { transform: translateX(-12px); }
+  65%  { transform: translateX(12px); }
+  100% { transform: translateX(0); }
+}
+@keyframes vibrate {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-.35px); }
+  75% { transform: translateY(.35px); }
+}
+
+/* drifting notes behind the content */
+.notes { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.note {
+  position: absolute; bottom: -40px;
+  font-family: var(--serif); line-height: 1;
+  color: var(--gold); opacity: 0; will-change: transform, opacity;
+}
 
 .bio {
   margin: 0 auto; max-width: 34ch; text-align: center;
   font-style: italic; font-size: 20px; color: var(--soft); text-wrap: pretty;
+  animation: riseIn 1s var(--ease) 1.75s both;
 }
 .occasions {
   margin: 22px auto 0; text-align: center; max-width: 36ch;
   font-family: var(--caps); font-size: 16px; letter-spacing: .06em; color: var(--ink);
+  animation: riseIn 1s var(--ease) 1.9s both;
 }
 .occasions span + span::before { content: "·"; color: var(--gold); margin: 0 .55em; }
-
-.cta {
-  display: block; margin: 34px auto 0; max-width: 300px;
-  text-align: center; text-decoration: none;
-  font-family: var(--sans); font-size: 12.5px; font-weight: 400;
-  letter-spacing: .28em; text-transform: uppercase;
-  color: var(--card); background: var(--ink);
-  padding: 15px 20px 15px calc(20px + .28em);
-  border: 1px solid var(--ink);
-  transition: background .3s, color .3s, border-color .3s;
-}
-.cta:hover { background: var(--gold); border-color: var(--gold); color: #fff; }
-.cta:focus-visible, .row:focus-visible, .copy:focus-visible { outline: 1px solid var(--gold); outline-offset: 4px; }
 
 section { margin-top: 40px; }
 h2 {
@@ -120,49 +168,102 @@ h2 {
   font-family: var(--sans); font-weight: 400; font-size: 11px;
   letter-spacing: .34em; text-transform: uppercase; color: var(--soft);
   padding-left: .34em;
+  animation: softIn 1s ease 2s both;
 }
 .list { list-style: none; margin: 0; padding: 0; }
+.list li { animation: riseIn .9s var(--ease) both; animation-delay: calc(2.05s + var(--i, 0) * .1s); }
 .row {
+  position: relative;
   display: flex; align-items: center; gap: 16px;
   padding: 15px 4px;
-  border-bottom: 1px solid var(--rule);
   color: inherit; text-decoration: none;
   transition: padding .3s ease;
 }
+/* each link's underline is a string that plucks on hover/tap */
+.row::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: var(--rule); transition: background .3s;
+}
+.row:hover::after, .row:focus-visible::after, .row:active::after {
+  background: var(--gold); animation: pluck .6s ease-out;
+}
+@keyframes pluck {
+  0% { transform: translateY(0); }
+  10% { transform: translateY(-1.6px); }
+  22% { transform: translateY(1.3px); }
+  34% { transform: translateY(-1px); }
+  46% { transform: translateY(.7px); }
+  58% { transform: translateY(-.4px); }
+  70% { transform: translateY(.2px); }
+  100% { transform: translateY(0); }
+}
 .list li:first-child .row { border-top: 1px solid var(--rule); }
 .row:hover { padding-left: 10px; }
+.row:focus-visible { outline: 1px solid var(--gold); outline-offset: 4px; }
 .row .ico { flex: none; width: 22px; text-align: center; color: var(--gold); font-size: 16px; }
 .row .name { flex: 1; font-size: 20px; font-weight: 500; }
-.row .handle { font-family: var(--sans); font-weight: 300; font-size: 13px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48%; }
 .row .chev { flex: none; color: var(--rule); transition: color .3s, transform .3s; }
 .row:hover .chev { color: var(--gold); transform: translateX(3px); }
-@media (max-width: 380px) { .row .handle { display: none; } }
 
 footer {
   margin-top: 40px; text-align: center;
   font-family: var(--sans); font-weight: 300; font-size: 12px; letter-spacing: .08em; color: var(--soft);
+  animation: softIn 1s ease 2.6s both;
 }
-.copy {
-  margin-top: 14px;
-  font: inherit; letter-spacing: .18em; text-transform: uppercase; font-size: 11px;
-  color: var(--ink); background: transparent; cursor: pointer;
-  border: 0; border-bottom: 1px solid var(--gold); padding: 4px 2px;
-}
-#copyFallback { display: block; width: 100%; margin-top: 10px; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); padding: 6px 10px; }
-[hidden] { display: none !important; }
 
-@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .crest .r1, .crest .r2, .violin .body { stroke-dashoffset: 0; }
+  .notes { display: none; }
+}
 </style>
 </head><body>
 
 <main class="sheet">
+  <div class="notes" id="notes" aria-hidden="true"></div>
   <header>
-    <div class="crest" aria-hidden="true">ZS</div>
+    <div class="crest" aria-hidden="true">
+      <svg viewBox="0 0 96 96"><circle class="r1" cx="48" cy="48" r="47"/><circle class="r2" cx="48" cy="48" r="42"/></svg>
+      <span>ZS</span>
+    </div>
     <h1>Zig Sarasate</h1>
     <p class="role">Violinist</p>
 
     <div class="ornament" aria-hidden="true">
-      <svg width="34" height="12" viewBox="0 0 34 12" fill="none"><path d="M1 6c5 0 6-4 10-4s4 8 6 8 2-8 6-8 5 4 10 4" stroke="currentColor" stroke-width="1"/></svg>
+      <svg class="violin" id="violin" viewBox="0 -14 160 84" fill="none">
+        <!-- body -->
+        <path class="body" pathLength="1" d="M78 23 C78 13 70 8 62 8.5 C57 9 54 10 52 12.5 C49 15 41 15 37 12.5 C34 10 30 5 22 5 C13 5 8 14 8 28 C8 42 13 51 22 51 C30 51 34 46 37 43.5 C41 41 49 41 52 43.5 C54 46 57 47 62 47.5 C70 48 78 43 78 33 Z"/>
+        <g class="detail">
+          <!-- f-holes -->
+          <path class="fhole" d="M29 15.5 c3 0 4 2.5 6 4.5 s3 2.5 5.5 2.5"/>
+          <path class="fhole" d="M29 40.5 c3 0 4 -2.5 6 -4.5 s3 -2.5 5.5 -2.5"/>
+          <!-- tailpiece, fingerboard, pegbox, scroll -->
+          <path class="tail" d="M10 26 L24 25 Q26 28 24 31 L10 30 Z"/>
+          <path class="board" d="M47 24.6 L134 25.8 L134 30.2 L47 31.4 Z"/>
+          <path class="scroll" d="M134 25.6 L146 25 M134 30.4 L146 31"/>
+          <path class="scroll" d="M146 25 C152 22 157 25 156 29.5 C155 33.5 149 34 147.5 30.5 C146.5 28 149 26.5 151 27.8"/>
+          <line class="peg" x1="138" y1="21" x2="138" y2="25.3"/>
+          <line class="peg" x1="143" y1="21" x2="143" y2="25.1"/>
+          <line class="peg" x1="138" y1="30.7" x2="138" y2="35"/>
+          <line class="peg" x1="143" y1="30.9" x2="143" y2="35"/>
+          <!-- strings -->
+          <line class="s" x1="24" y1="26.4" x2="134" y2="26.6"/>
+          <line class="s" x1="24" y1="27.5" x2="134" y2="27.6"/>
+          <line class="s" x1="24" y1="28.5" x2="134" y2="28.4"/>
+          <line class="s" x1="24" y1="29.6" x2="134" y2="29.4"/>
+          <!-- bridge -->
+          <path class="bridge" d="M33 24.8 Q34.5 28 33 31.2"/>
+        </g>
+        <!-- bow, crossing the strings and moving along its length -->
+        <g class="bowwrap" transform="translate(42 28) rotate(-58)">
+          <g class="bow">
+            <path class="stick" d="M-36 -2.6 Q0 -4.4 36 -2.4"/>
+            <line class="hair" x1="-32" y1="0.6" x2="36" y2="-1"/>
+            <rect class="frog" x="-38" y="-3.4" width="7" height="5" rx="1"/>
+            <path class="tip" d="M36 -3.6 L39 -1.5 L36 -0.6 Z"/>
+          </g>
+        </g>
+      </svg>
     </div>
 
     <p class="bio">Live violin for weddings, celebrations, and distinguished occasions — performed with grace, tailored to your moment.</p>
@@ -184,20 +285,20 @@ footer {
 <script>
 /* ===== Edit details here ===== */
 const LINKS = [
-  { group: "performances", name: "Facebook",  icon: "fa-brands fa-facebook",          handle: "Personal profile",   url: "https://www.facebook.com/ziguenerweisen.samillano/" },
-  { group: "performances", name: "Facebook Page", icon: "fa-brands fa-facebook-f",    handle: "Zig Sarasate · Violinist", url: "https://www.facebook.com/people/Saxophone-Violin-Duo-SVD/61555980945013/" },
-  { group: "performances", name: "Instagram", icon: "fa-brands fa-instagram",         handle: "@yourhandle",        url: "https://www.instagram.com/cliff062023/" },
-  { group: "performances", name: "TikTok",    icon: "fa-brands fa-tiktok",            handle: "@yourhandle",        url: "https://www.tiktok.com/@zig.sarasate?is_from_webapp=1&sender_device=pc" },
-  { group: "performances", name: "YouTube",   icon: "fa-brands fa-youtube",           handle: "@yourchannel",       url: "https://www.youtube.com/@clifmaestro2313" },
+  { group: "performances", name: "Facebook",      icon: "fa-brands fa-facebook",   url: "https://www.facebook.com/ziguenerweisen.samillano/" },
+  { group: "performances", name: "Facebook Page", icon: "fa-brands fa-facebook-f", url: "https://www.facebook.com/people/Saxophone-Violin-Duo-SVD/61555980945013/" },
+  { group: "performances", name: "Instagram",     icon: "fa-brands fa-instagram",  url: "https://www.instagram.com/cliff062023/" },
+  { group: "performances", name: "TikTok",        icon: "fa-brands fa-tiktok",     url: "https://www.tiktok.com/@zig.sarasate" },
+  { group: "performances", name: "YouTube",       icon: "fa-brands fa-youtube",    url: "https://www.youtube.com/@clifmaestro2313" },
 ];
 /* ============================= */
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const chev = '<svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M5 2.5L9.5 7 5 11.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-
-for (const l of LINKS) {
+LINKS.forEach((l, i) => {
   const li = document.createElement("li");
+  li.style.setProperty("--i", i);
   const a = document.createElement("a");
   a.className = "row";
   a.href = l.url;
@@ -207,8 +308,47 @@ for (const l of LINKS) {
     <span class="name">${esc(l.name)}</span>${chev}`;
   li.appendChild(a);
   document.getElementById(l.group).appendChild(li);
-}
+});
 
 document.getElementById("yr").textContent = new Date().getFullYear();
+
+/* ---- Music ---- */
+const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (!calm) {
+  // the bow draws across the strings now and then
+  const violin = document.getElementById("violin");
+  const play = () => {
+    violin.classList.remove("playing");
+    void violin.getBoundingClientRect();
+    violin.classList.add("playing");
+    setTimeout(() => violin.classList.remove("playing"), 3400);
+  };
+  setTimeout(() => { play(); setInterval(() => { if (!document.hidden) play(); }, 9000); }, 2300);
+
+  // gold notes drift upward behind the content
+  const layer = document.getElementById("notes");
+  const glyphs = ["\u266A", "\u266B", "\u2669", "\u266C"];
+  const spawn = () => {
+    if (document.hidden || layer.childElementCount > 9) return;
+    const n = document.createElement("span");
+    n.className = "note";
+    n.textContent = glyphs[Math.floor(Math.random() * glyphs.length)] + "\uFE0E";
+    const size = 16 + Math.random() * 16;
+    n.style.fontSize = size + "px";
+    n.style.left = (4 + Math.random() * 88) + "%";
+    layer.appendChild(n);
+    const rise = layer.clientHeight + 80;
+    const sway = (Math.random() < .5 ? -1 : 1) * (12 + Math.random() * 22);
+    const tilt = (Math.random() - .5) * 30;
+    const peak = .12 + Math.random() * .12;
+    n.animate([
+      { transform: `translate(0,0) rotate(${tilt}deg)`, opacity: 0 },
+      { opacity: peak, offset: .15 },
+      { transform: `translate(${sway}px, ${-rise * .5}px) rotate(${-tilt}deg)`, opacity: peak, offset: .5 },
+      { transform: `translate(${-sway * .4}px, ${-rise}px) rotate(${tilt}deg)`, opacity: 0 }
+    ], { duration: 11000 + Math.random() * 6000, easing: "linear" }).onfinish = () => n.remove();
+  };
+  setTimeout(() => { spawn(); setInterval(spawn, 1500); }, 2400);
+}
 </script>
 </body></html>
